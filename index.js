@@ -29,6 +29,7 @@ async function run() {
     await client.connect();
 
     const coffeesCollection = client.db('coffeeDB').collection('coffees')
+    const userCollection = client.db('coffeeDB').collection('users')
 
 
     // get  
@@ -40,11 +41,11 @@ async function run() {
     })
 
     // view coffee details
-    app.get('/coffees/:id', async(req, res) => {
+    app.get('/coffees/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await coffeesCollection.findOne(query);
-      res.send(result); 
+      res.send(result);
     })
 
 
@@ -58,24 +59,33 @@ async function run() {
 
     // update coffee details
 
-    app.put('/coffees/:id', async(req, res) => {
+    app.put('/coffees/:id', async (req, res) => {
       const id = req.params.id;
-      const filter = {_id: new ObjectId(id)};
-      const options = {upsert: true};
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
       const updateCoffee = req.body;
       const updatedDoc = {
-        $set:updateCoffee
+        $set: updateCoffee
       }
       const result = await coffeesCollection.updateOne((filter), updatedDoc, options)
       res.send(result)
     })
 
     // deleted
-    app.delete('/coffees/:id', async(req, res) => {
+    app.delete('/coffees/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await coffeesCollection.deleteOne((query));
       res.send(result);
+    })
+
+    // user related apis 
+    app.post('/users', async (req, res) => {
+      const userProfile = req.body;
+      console.log(userProfile)
+      const result = await userCollection.insertOne(userProfile);
+      res.send(result)
+
     })
 
 
